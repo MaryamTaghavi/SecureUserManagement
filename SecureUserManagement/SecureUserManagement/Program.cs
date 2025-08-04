@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SecureUserManagement.Infrustructure;
+using SecureUserManagement.Interfaces;
+using SecureUserManagement.Services;
 using System.Text;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
@@ -45,6 +47,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=mydb.sqlite"));
 
 SQLitePCL.Batteries_V2.Init();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
