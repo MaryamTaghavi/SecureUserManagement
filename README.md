@@ -1,6 +1,6 @@
 # SecureUserManagement
 
-این ریپازیتوری شامل پیاده سازی کامل مفهوم Authentication و Authorization است، از تکنولوژی های JWT Auth، Policy-based، Role-Based Authorization، Refresh Token استفاده شده است.
+این ریپازیتوری شامل پیاده سازی کامل مفهوم Authentication (احراز هویت) و Authorization (حق دسترسی) است، از تکنولوژی های JWT Auth، Policy-based، Role-Based Authorization، Refresh Token استفاده شده است.
 از دیتابیس SqlLite جهت سبکی استفاده شده است.
 
 ---
