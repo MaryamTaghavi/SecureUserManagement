@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureUserManagement", "SecureUserManagement\SecureUserManagement.csproj", "{CE0D3CA9-2F7B-47DE-A12C-5DF4E26A226E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE0D3CA9-2F7B-47DE-A12C-5DF4E26A226E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE0D3CA9-2F7B-47DE-A12C-5DF4E26A226E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE0D3CA9-2F7B-47DE-A12C-5DF4E26A226E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE0D3CA9-2F7B-47DE-A12C-5DF4E26A226E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {50D854A5-B06A-4C36-9A46-E3F5A2FD2585}
+	EndGlobalSection
+EndGlobal
