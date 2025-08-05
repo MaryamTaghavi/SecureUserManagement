@@ -4,5 +4,7 @@ namespace SecureUserManagement.Interfaces;
 
 public interface IAuthService
 {
-    Task<string> LoginWithPasswordAsync(LoginRequest login , CancellationToken cancellationToken);
+    Task<LoginResponse?> LoginWithPasswordAsync(LoginRequest login , CancellationToken cancellationToken);
+    Task<LoginResponse?> LoginWithRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken);
+
 }

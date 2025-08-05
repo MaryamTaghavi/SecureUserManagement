@@ -7,6 +7,7 @@ using SecureUserManagement.Model;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace SecureUserManagement.Services;
 
@@ -21,17 +22,59 @@ public class AuthService : IAuthService
         _configuration = configuration;
     }
 
-    public async Task<string> LoginWithPasswordAsync(LoginRequest login, CancellationToken cancellationToken)
+    public async Task<LoginResponse?> LoginWithPasswordAsync(LoginRequest login, CancellationToken cancellationToken)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(r => r.Name == login.UserName && r.Password == login.Password, cancellationToken);
-
-        if (user == null)
+        try
         {
-            return "";
+            var user = await _context.Users.FirstOrDefaultAsync(r => r.Name == login.UserName && r.Password == login.Password, cancellationToken);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            var response = (GenerateToken(user), GenerateRefreshtoken());
+
+            var rec = new RefreshToken()
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                Token = response.Item2,
+                ExpiresOnUtc = DateTime.UtcNow.AddDays(7),
+
+            };
+            await _context.RefreshTokens.AddAsync(rec, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return new LoginResponse(response.Item1, response.Item2);
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
+
+    public async Task<LoginResponse?> LoginWithRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
+    {
+        var refreshtoken = await _context.RefreshTokens
+            .Include( r => r.User).FirstOrDefaultAsync(r => r.Token == refreshToken , cancellationToken);
+
+        if (refreshtoken == null)
+        {
+            return null;
         }
 
-        return GenerateToken(user);
+        var response = (GenerateToken(refreshtoken.User), GenerateRefreshtoken());
+
+        refreshtoken.Token = response.Item2;
+        refreshtoken.ExpiresOnUtc = DateTime.UtcNow.AddDays(7);
+
+        _context.RefreshTokens.Update(refreshtoken);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return new LoginResponse(response.Item1, response.Item2);
     }
+
 
     public string GenerateToken(User user)
     {
@@ -52,5 +95,10 @@ public class AuthService : IAuthService
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public string GenerateRefreshtoken()
+    {
+        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
     }
 }
