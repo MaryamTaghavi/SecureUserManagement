@@ -6,8 +6,8 @@ using SecureUserManagement.Interfaces;
 using SecureUserManagement.Model;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace SecureUserManagement.Services;
 
@@ -26,43 +26,36 @@ public class AuthService : IAuthService
 
     public async Task<LoginResponse?> LoginWithPasswordAsync(LoginRequest login, CancellationToken cancellationToken)
     {
-        try
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(r => r.Name == login.UserName && r.Password == login.Password, cancellationToken);
+        var user = await _context.Users.FirstOrDefaultAsync(r => r.Name == login.UserName && r.Password == login.Password, cancellationToken);
 
-            if (user == null)
-            {
-                return null;
-            }
-
-            var response = (GenerateToken(user), GenerateRefreshtoken());
-
-            var rec = new RefreshToken()
-            {
-                Id = Guid.NewGuid(),
-                UserId = user.Id,
-                Token = response.Item2,
-                ExpiresOnUtc = DateTime.UtcNow.AddDays(7),
-
-            };
-
-            await _revokeRefreshTokens.Handle(user.Id);
-
-            await _context.RefreshTokens.AddAsync(rec, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return new LoginResponse(response.Item1, response.Item2);
-        }
-        catch (Exception ex)
+        if (user == null)
         {
             return null;
         }
+
+        var response = (GenerateToken(user), GenerateRefreshtoken());
+
+        var rec = new RefreshToken()
+        {
+            Id = Guid.NewGuid(),
+            UserId = user.Id,
+            Token = response.Item2,
+            ExpiresOnUtc = DateTime.UtcNow.AddDays(7),
+
+        };
+
+        await _revokeRefreshTokens.Handle(user.Id);
+
+        await _context.RefreshTokens.AddAsync(rec, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return new LoginResponse(response.Item1, response.Item2);
     }
 
     public async Task<LoginResponse?> LoginWithRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
     {
         var refreshtoken = await _context.RefreshTokens
-            .Include( r => r.User).FirstOrDefaultAsync(r => r.Token == refreshToken , cancellationToken);
+            .Include(r => r.User).FirstOrDefaultAsync(r => r.Token == refreshToken, cancellationToken);
 
         if (refreshtoken == null)
         {
