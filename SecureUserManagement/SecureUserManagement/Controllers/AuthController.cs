@@ -46,7 +46,7 @@ public class AuthController : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
 
-    public async Task<IActionResult> LoginWithRefreshToken([FromBody] string refreshToken , CancellationToken cancellationToken)
+    public async Task<IActionResult> LoginWithRefreshToken([FromQuery] string refreshToken , CancellationToken cancellationToken)
     {
         var result = await _authService.LoginWithRefreshTokenAsync(refreshToken, cancellationToken);
 

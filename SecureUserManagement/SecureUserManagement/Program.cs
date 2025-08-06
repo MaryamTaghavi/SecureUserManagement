@@ -36,6 +36,7 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization();
+builder.Services.AddScoped<RevokeRefreshToken>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

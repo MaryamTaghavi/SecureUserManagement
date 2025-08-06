@@ -15,11 +15,13 @@ public class AuthService : IAuthService
 {
     private readonly AppDbContext _context;
     private readonly IConfiguration _configuration;
+    private readonly RevokeRefreshToken _revokeRefreshTokens;
 
-    public AuthService(AppDbContext context, IConfiguration configuration)
+    public AuthService(AppDbContext context, IConfiguration configuration, RevokeRefreshToken revokeRefreshTokens)
     {
         _context = context;
         _configuration = configuration;
+        _revokeRefreshTokens = revokeRefreshTokens;
     }
 
     public async Task<LoginResponse?> LoginWithPasswordAsync(LoginRequest login, CancellationToken cancellationToken)
@@ -43,6 +45,9 @@ public class AuthService : IAuthService
                 ExpiresOnUtc = DateTime.UtcNow.AddDays(7),
 
             };
+
+            await _revokeRefreshTokens.Handle(user.Id);
+
             await _context.RefreshTokens.AddAsync(rec, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
