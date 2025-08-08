@@ -31,6 +31,7 @@ JWT Token شامل سه بخش اصلی است :
 
 ---
 برای ایجاد حق دسترسی (authorization) دو روش وجود دارد:
+
 1- role-based
 This is based on roles like (admin , user , ...)
 The [Authorize(Roles = "Admin")] attribute checks if the user’s ClaimsPrincipal contains a role claim "Admin".
