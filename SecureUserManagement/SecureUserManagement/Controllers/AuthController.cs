@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SecureUserManagement.Model;
 using SecureUserManagement.Interfaces;
+using SecureUserManagement.Authorization;
 
 namespace SecureUserManagement.Controllers;
 
@@ -47,6 +48,26 @@ public class AuthController : ControllerBase
     [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
 
     public async Task<IActionResult> LoginWithRefreshToken([FromQuery] string refreshToken , CancellationToken cancellationToken)
+    {
+        var result = await _authService.LoginWithRefreshTokenAsync(refreshToken, cancellationToken);
+
+        if (result == null)
+            return BadRequest("کاربر یافت نشد!");
+
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// کرفتن کاربر با شناسه
+    /// </summary>
+    /// <param name="payload"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [HttpPost("GetById")]
+    [HasPermission(Permission.ReadMember)]
+    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+
+    public async Task<IActionResult> GetById([FromQuery] int id, CancellationToken cancellationToken)
     {
         var result = await _authService.LoginWithRefreshTokenAsync(refreshToken, cancellationToken);
 
