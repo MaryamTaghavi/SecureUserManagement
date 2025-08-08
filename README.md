@@ -30,6 +30,30 @@ JWT Token شامل سه بخش اصلی است :
 وقتی کاربر لاگین میکند و یک توکن از سرور دریافت میکند هر توکن یک expire time ای دارد، تصور کنید در فیس بوک یا اینستاگرام هستید و توکن هر 10 دقیقه ای یک بار expire میشود، اینجا مفهوم RefreshToken مطرح میشود. با لاگین توسط کاربر یه توکن و یک refresh token به کلاینت فرستاده میشود، اگر توکن باطل شده باشد کلاینت باید RefreshToken را ارسال کند، اگر معتبر بود مجدد توکن ساخته میشود و به کلاینت ارسال میشود و کلاینت باید از طریق آن لاگین کند. عمر RefreshToken معمولا طولانی است.
 
 ---
+برای ایجاد حق دسترسی (authorization) دو روش وجود دارد:
+
+1- role-based
+This is based on roles like (admin , user , ...)
+The [Authorize(Roles = "Admin")] attribute checks if the user’s ClaimsPrincipal contains a role claim "Admin".
+
+User has claims like:
+
+json
+{
+  "sub": "123",
+  "name": "Maryam",
+  "role": "Admin"
+}
+
+2- policy-based
+This is more flexible than role, you define policies that can check any condition, not just roles.
+services.AddAuthorization(options =>
+{
+    options.AddPolicy("Over18", policy =>
+        policy.RequireClaim("Age", "18", "19", "20"));
+});
+
+---
 
 ## نحوه استفاده
 
