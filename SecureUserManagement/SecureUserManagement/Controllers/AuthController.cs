@@ -7,7 +7,6 @@ using SecureUserManagement.Authorization;
 namespace SecureUserManagement.Controllers;
 
 [ApiController]
-[Authorize]
 public class AuthController : ControllerBase
 {
     private IAuthService _authService;

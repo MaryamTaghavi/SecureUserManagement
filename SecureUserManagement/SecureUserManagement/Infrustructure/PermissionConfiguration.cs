@@ -14,7 +14,7 @@ public class PermissionConfiguration : IEntityTypeConfiguration<Data.Permission>
             .Select(p => new Data.Permission
             {
                 Id = (int)p,
-                Name = p.ToString()
+                Name = p.ToString()               
             });
 
         // سید کردن دیتای اولیه
