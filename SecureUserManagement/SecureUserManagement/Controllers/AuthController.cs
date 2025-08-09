@@ -69,11 +69,6 @@ public class AuthController : ControllerBase
 
     public async Task<IActionResult> GetById([FromQuery] int id, CancellationToken cancellationToken)
     {
-        var result = await _authService.LoginWithRefreshTokenAsync(refreshToken, cancellationToken);
-
-        if (result == null)
-            return BadRequest("کاربر یافت نشد!");
-
-        return Ok(result);
+        return null;
     }
 }
