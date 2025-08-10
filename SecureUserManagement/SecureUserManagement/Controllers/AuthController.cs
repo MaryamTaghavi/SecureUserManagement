@@ -58,17 +58,16 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// کرفتن کاربر با شناسه
+    /// گرفتن کاربر با شناسه
     /// </summary>
     /// <param name="id"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpGet("GetById")]
     [HasPermission(Permission.ReadMember)]
-    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetById([FromQuery] int id, CancellationToken cancellationToken)
     {
-        var claims = HttpContext.User.Claims;
-        return null;
+        return Ok("Hello User");
     }
 }

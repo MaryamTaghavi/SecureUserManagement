@@ -27,7 +27,7 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
         IPermissionService permissionService = scope.ServiceProvider.GetService<IPermissionService>();
 
-        HashSet<string> permissions = await permissionService.GetPermissionsAsync(1);
+        HashSet<string> permissions = await permissionService.GetPermissionsAsync(parsedUserId);
 
         if (permissions.Contains(requirment.Permission))
         {
