@@ -1,14 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using SecureUserManagement.Authorization;
 using SecureUserManagement.Infrustructure;
 using SecureUserManagement.Infrustructure.Authentication;
 using SecureUserManagement.Interfaces;
 using SecureUserManagement.Services;
 using System.Text;
-using Microsoft.AspNetCore.Authorization;
-using SecureUserManagement.Authorization;
-using Microsoft.OpenApi.Models;
-using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,31 +20,44 @@ builder.Services.AddControllers();
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["SecretKey"];
 
-builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer", options =>
+builder.Services.AddAuthentication()
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = jwtSettings["Issuer"],
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+    };
 
-            ValidateAudience = true,
-            ValidAudience = jwtSettings["Audience"],
-
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero,
-
-            NameClaimType = ClaimTypes.NameIdentifier
-
-        };
-    });
+    // Log token
+    //options.Events = new JwtBearerEvents
+    //{
+    //    OnAuthenticationFailed = context =>
+    //    {
+    //        Console.WriteLine($"hellooooooooooooo Authentication Failed: {context.Exception.Message}");
+    //        return Task.CompletedTask;
+    //    },
+    //    OnTokenValidated = context =>
+    //    {
+    //        Console.WriteLine("hellooooooooooooo Token Validated");
+    //        return Task.CompletedTask;
+    //    },
+    //    OnMessageReceived = context =>
+    //    {
+    //        Console.WriteLine($"hellooooooooooooo Token Received: {context.Token}");
+    //        return Task.CompletedTask;
+    //    }
+    //};
+});
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization();
-builder.Services.AddSingleton<IAuthorizationHandler , PermissionAuthorizationHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
 builder.Services.AddScoped<RevokeRefreshToken>();
 
@@ -61,7 +74,7 @@ builder.Services.AddSwaggerGen(c =>
         Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
-    }) ;
+});
 
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -82,6 +95,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 

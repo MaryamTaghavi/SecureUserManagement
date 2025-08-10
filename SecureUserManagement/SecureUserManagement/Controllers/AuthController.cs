@@ -6,6 +6,7 @@ using SecureUserManagement.Authorization;
 
 namespace SecureUserManagement.Controllers;
 
+[Authorize]
 [ApiController]
 public class AuthController : ControllerBase
 {
@@ -59,15 +60,15 @@ public class AuthController : ControllerBase
     /// <summary>
     /// کرفتن کاربر با شناسه
     /// </summary>
-    /// <param name="payload"></param>
+    /// <param name="id"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    [HttpPost("GetById")]
+    [HttpGet("GetById")]
     [HasPermission(Permission.ReadMember)]
     [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
-
     public async Task<IActionResult> GetById([FromQuery] int id, CancellationToken cancellationToken)
     {
+        var claims = HttpContext.User.Claims;
         return null;
     }
 }

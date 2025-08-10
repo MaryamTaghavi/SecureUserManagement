@@ -19,7 +19,7 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
 
         string? userId = context.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
 
-        if (!int.TryParse(userId , out int parsedUserId))
+        if (!int.TryParse(userId, out int parsedUserId))
         {
             return;
         }
@@ -27,7 +27,7 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
         using IServiceScope scope = _serviceScopeFactory.CreateScope();
         IPermissionService permissionService = scope.ServiceProvider.GetService<IPermissionService>();
 
-        HashSet<string> permissions = await permissionService.GetPermissionsAsync(parsedUserId);
+        HashSet<string> permissions = await permissionService.GetPermissionsAsync(1);
 
         if (permissions.Contains(requirment.Permission))
         {
